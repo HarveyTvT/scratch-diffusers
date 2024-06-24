@@ -3,11 +3,12 @@ from diffusers.utils import load_image
 import torch
 
 
-def sd15(prompt):
+def sd15(prompt, negative_prompt="", width=512, height=512, guidance_scale=7.5, output="output/generated_sd15.png"):
     pipeline = AutoPipelineForText2Image.from_pretrained(
         "runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16, variant="fp16").to("cuda")
-    image = pipeline(prompt).images[0]
-    image.save("output/generated_sd15.png")
+    image = pipeline(prompt=prompt, negative_prompt=negative_prompt, width=width, height=height,
+                     guidance_scale=guidance_scale).images[0]
+    image.save(output)
 
 
 def sdxl(prompt):
@@ -37,4 +38,13 @@ def sd15_controlnet(prompt, poseImage):
 prompt = "Astronaut in a jungle, cold color palette, muted colors, detailed, 8k"
 # sd15(prompt)
 # sdxl(prompt)
-sd15_controlnet(prompt, "./input/images_control.png")
+# sd15_controlnet(prompt, "./input/images_control.png")
+
+# sd15(prompt, width=512, height=768)
+
+# sd15(prompt, guidance_scale=2.5, output="output/generated_sd15_2_5.png")
+# sd15(prompt, guidance_scale=7.5, output="output/generated_sd15_7_5.png")
+# sd15(prompt, guidance_scale=10.5, output="output/generated_sd15_10_5.png")
+
+negative_prompt = "ugly, deformed, disfigured, poor details, bad anatomy"
+sd15(prompt=prompt, negative_prompt=negative_prompt)
